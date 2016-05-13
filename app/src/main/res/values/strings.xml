@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">Whipped</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_whip">WhipActivity</string>
+
+    <string name="whip_1" translatable="false">whip_hard_1.mp3</string>
+    <string name="whip_2" translatable="false">whip_hard_2.mp3</string>
+    <string name="whip_3" translatable="false">whip_hard_3.mp3</string>
+    <string name="whip_4" translatable="false">whip_snap_1.mp3</string>
+    <string name="whip_5" translatable="false">whip_snap_2.mp3</string>
+    <string name="whip_6" translatable="false">whip_snap_3.mp3</string>
+    <string name="select_whip">Pick a whip...</string>
+
 </resources>

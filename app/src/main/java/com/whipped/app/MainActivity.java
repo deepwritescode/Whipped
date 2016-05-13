@@ -1,117 +1,73 @@
 package com.whipped.app;
 
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorListener;
-import android.hardware.SensorManager;
-import android.media.MediaPlayer;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
-
-import java.io.IOException;
+import android.view.View;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
 
-    final MediaPlayer mp = new MediaPlayer();
-
-    /* put this into your activity class */
-    private SensorManager mSensorManager;
-    private float mAccel; // acceleration apart from gravity
-    private float mAccelCurrent; // current acceleration including gravity
-    private float mAccelLast; // last acceleration including gravity
-
-    private final SensorEventListener mSensorListener = new SensorEventListener() {
-
-        public void onSensorChanged(SensorEvent se) {
-            float x = se.values[0];
-            float y = se.values[1];
-            float z = se.values[2];
-            mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
-            float delta = mAccelCurrent - mAccelLast;
-            mAccel = mAccel * 0.9f + delta; // perform low-cut filter
-
-            if (mAccel > 12) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_LONG);
-                toast.show();
-            }
-        }
-
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-    };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mSensorManager.registerListener(mSensorListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-    @Override
-    protected void onPause() {
-        mSensorManager.unregisterListener(mSensorListener);
-        super.onPause();
-    }
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setupShakeListener();
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playWhip();
-            }
-        });
-
     }
 
-    private void setupShakeListener() {
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mSensorManager.registerListener(mSensorListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_NORMAL);
-        mAccel = 0.00f;
-        mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return false;
     }
 
-    private void playWhip() {
-        if(mp.isPlaying()) {
-            mp.stop();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void whipSelected(View v) {
+        String sound = (String) v.getTag();
+        int image = 0;
+
+        switch (v.getId()) {
+            case R.id.whip_pic_1:
+                image = R.drawable.whip_1;
+                break;
+            case R.id.whip_pic_2:
+                image = R.drawable.whip_2;
+                break;
+            case R.id.whip_pic_3:
+                image = R.drawable.whip_3;
+                break;
+            case R.id.whip_pic_4:
+                image = R.drawable.whip_4;
+                break;
+            case R.id.whip_pic_5:
+                image = R.drawable.whip_5;
+                break;
+            case R.id.whip_pic_6:
+                image = R.drawable.whip_6;
+                break;
         }
 
-        try {
-            mp.reset();
-            AssetFileDescriptor afd;
-            afd = getAssets().openFd("w_whip_sfx_hard1.mp3");
-            mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
-            mp.prepare();
-            mp.start();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Intent i = new Intent(this, WhipActivity.class);
+        i.putExtra(WhipActivity.STRING_EXTRA_SOUND, sound);
+        i.putExtra(WhipActivity.INT_EXTRA_IMAGE, image);
+        startActivity(i);
     }
 }
